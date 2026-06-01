@@ -12,14 +12,14 @@ import {
 const words = ["Full-Stack & Automation Architect", "IoT Systems Integrator", "Premium E-Commerce Developer"];
 
 const skills = [
-  { name: "Next.js / React / TypeScript / Vercel Cloud Deployment", level: "85%" },
-  { name: "E-Commerce Architecture & Premium UI/UX Design (Fragrance Store)", level: "93%" },
+  { name: "Next.js / React / TypeScript / Vercel Cloud Deployment", level: "75%" },
+  { name: "E-Commerce Architecture & Premium UI/UX Design (Fragrance Store)", level: "83%" },
   { name: "WordPress & High-Performance Kadence WP Customization", level: "90%" },
-  { name: "IoT Integration (MQTT Broker, ESP32, Real-time Data Dashboard)", level: "85%" },
-  { name: "PLC Programming (Mitsubishi Basic Ladder Logic, Omron, Delta)", level: "88%" },
-  { name: "Electrical Troubleshooting & 3-Phase Panel Wiring", level: "95%" },
-  { name: "Inverter Tuning & Configuration (ABB, INVT, Delta, Schneider)", level: "92%" },
-  { name: "Sensor Calibration (PT100, Thermocouple, Proximity, Laser Marking)", level: "90%" },
+  { name: "IoT Integration (MQTT Broker, ESP32, Real-time Data Dashboard)", level: "80%" },
+  { name: "PLC Programming (Mitsubishi Basic Ladder Logic, Omron, Delta)", level: "85%" },
+  { name: "Electrical Troubleshooting & 3-Phase Panel Wiring", level: "92%" },
+  { name: "Inverter Tuning & Configuration (ABB, INVT, Delta, Schneider)", level: "88%" },
+  { name: "Sensor Calibration (PT100, Thermocouple, Proximity, Laser Marking)", level: "87%" },
 ];
 
 const faqs = [
