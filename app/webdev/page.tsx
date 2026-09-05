@@ -3,10 +3,14 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
-  ArrowLeft, Mail, ExternalLink, Code2, Layers, Database,
+  ArrowLeft, ExternalLink, Code2, Layers, Database,
   Terminal, ArrowRight, ShoppingBag, Building2, Wallet
 } from 'lucide-react';
 import { useReveal, useTypingEffect } from '../lib/useReveal';
+import {
+  CursorSpotlight, ScrollProgressBar, SectionDotNav, AnimatedCounter,
+  Marquee, TiltCard, CopyEmail, BackToTop, StaggeredText,
+} from '../lib/effects';
 
 const roles = [
   'Full-Stack Web Developer',
@@ -14,10 +18,18 @@ const roles = [
   'Freelance Software Builder',
 ];
 
+const sections = [
+  { id: 'hero', label: 'Profil' },
+  { id: 'proyek', label: 'Proyek' },
+  { id: 'stack', label: 'Tech Stack' },
+  { id: 'kontak', label: 'Kontak' },
+];
+
 const projects = [
   {
     name: 'HYVA ARVM',
     tag: 'E-commerce',
+    category: 'ecommerce',
     icon: <ShoppingBag size={18} />,
     desc: 'Website e-commerce parfum dengan keranjang belanja, checkout multi-step lengkap dengan peta lokasi dan dropdown wilayah Indonesia bertingkat, integrasi pembayaran Midtrans, dan panel admin dengan kontrol akses berbasis role.',
     stack: ['Next.js', 'Supabase', 'Zustand', 'Framer Motion', 'Midtrans'],
@@ -27,6 +39,7 @@ const projects = [
   {
     name: 'PT Solusindo Works',
     tag: 'Company Profile',
+    category: 'company',
     icon: <Building2 size={18} />,
     desc: 'Website perusahaan untuk layanan rekayasa industri, dibangun dengan arsitektur berbasis fitur, animasi scroll-reveal, dan parallax mengikuti kursor.',
     stack: ['Next.js', 'Tailwind CSS', 'Framer Motion', 'TypeScript'],
@@ -36,12 +49,20 @@ const projects = [
   {
     name: 'Expense Tracker',
     tag: 'Personal Tool',
+    category: 'tool',
     icon: <Wallet size={18} />,
     desc: 'Aplikasi pencatat pengeluaran pribadi menggantikan Google Sheets — dengan breakdown kategori, grafik tren bulanan, upload foto struk, dan import/export ke Excel.',
     stack: ['React', 'Chart.js', 'xlsx'],
     github: null,
     url: null,
   },
+];
+
+const filterTabs = [
+  { key: 'all', label: 'Semua' },
+  { key: 'ecommerce', label: 'E-commerce' },
+  { key: 'company', label: 'Company Profile' },
+  { key: 'tool', label: 'Personal Tool' },
 ];
 
 const techStack = [
@@ -81,7 +102,10 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 
 export default function WebDevPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeFilter, setActiveFilter] = useState('all');
   const typed = useTypingEffect(roles);
+
+  const visibleProjects = activeFilter === 'all' ? projects : projects.filter((p) => p.category === activeFilter);
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -108,6 +132,11 @@ export default function WebDevPage() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-slate-200 font-sans antialiased selection:bg-indigo-500 selection:text-white relative overflow-hidden">
+      <ScrollProgressBar colorClass="bg-indigo-500" />
+      <CursorSpotlight color="99,102,241" />
+      <SectionDotNav sections={sections} activeColorClass="bg-indigo-400 border-indigo-400" />
+      <BackToTop accentClass="bg-indigo-500 hover:bg-indigo-400 text-white" />
+
       {/* Dev-themed dot grid background */}
       <div className="fixed inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] bg-[size:24px_24px] opacity-40 pointer-events-none" />
       <div className="fixed top-[-15%] right-[10%] w-[550px] h-[550px] bg-indigo-500/10 rounded-full blur-[130px] pointer-events-none animate-pulse" style={{ animationDuration: '7s' }} />
@@ -126,7 +155,7 @@ export default function WebDevPage() {
       </nav>
 
       {/* HERO */}
-      <section className="relative px-6 pt-20 pb-24 max-w-5xl mx-auto">
+      <section id="hero" className="relative px-6 pt-20 pb-24 max-w-5xl mx-auto">
         <div className="grid md:grid-cols-[auto_1fr] gap-8 items-center">
           <div className="relative w-28 h-28 rounded-2xl overflow-hidden border-2 border-indigo-500/30 shrink-0 shadow-[0_0_30px_rgba(99,102,241,0.15)]">
             <Image src="/profile.png" alt="Rizky Tri Wahyudi" fill sizes="112px" className="object-cover" />
@@ -136,7 +165,9 @@ export default function WebDevPage() {
               <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
               Terbuka untuk proyek freelance
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">Rizky Tri Wahyudi</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
+              <StaggeredText text="Rizky Tri Wahyudi" />
+            </h1>
             <p className="text-indigo-400 text-base font-semibold h-6 font-mono" suppressHydrationWarning translate="no">
               {typed}
               <span className="animate-pulse">_</span>
@@ -147,25 +178,65 @@ export default function WebDevPage() {
               maintenance.
             </p>
             <div className="flex flex-wrap gap-4 pt-2 text-xs text-slate-500">
-              <span className="flex items-center gap-1.5"><Mail size={13} /> rizkytriwahyudiii@gmail.com</span>
+              <CopyEmail email="rizkytriwahyudiii@gmail.com" accentClass="text-slate-500 hover:text-indigo-400" />
               <a href="https://github.com/rizkytriwahyudiii-ai" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-indigo-400 transition-colors">
                 <GithubIcon size={13} /> GitHub
               </a>
             </div>
           </div>
         </div>
+
+        {/* STATS with animated counters */}
+        <Reveal delay={100}>
+          <div className="grid grid-cols-3 gap-4 mt-14 pt-10 border-t border-slate-900">
+            <div className="text-center md:text-left">
+              <p className="text-2xl md:text-3xl font-black text-white"><AnimatedCounter value={3} /></p>
+              <p className="text-[11px] text-slate-500 mt-1">Proyek Dibangun</p>
+            </div>
+            <div className="text-center md:text-left">
+              <p className="text-2xl md:text-3xl font-black text-white"><AnimatedCounter value={9} /></p>
+              <p className="text-[11px] text-slate-500 mt-1">Tools & Framework</p>
+            </div>
+            <div className="text-center md:text-left">
+              <p className="text-2xl md:text-3xl font-black text-white">S1 TI</p>
+              <p className="text-[11px] text-slate-500 mt-1">Teknik Informatika</p>
+            </div>
+          </div>
+        </Reveal>
+
+        <div className="mt-10">
+          <Marquee
+            items={['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Supabase', 'Zustand', 'Framer Motion', 'Vercel']}
+            accentClass="border-indigo-500/20 text-indigo-300"
+          />
+        </div>
       </section>
 
-      {/* PROJECTS */}
-      <section className="px-6 py-16 border-t border-slate-900 relative">
+      {/* PROJECTS with filter tabs */}
+      <section id="proyek" className="px-6 py-16 border-t border-slate-900 relative">
         <div className="max-w-5xl mx-auto">
           <Reveal>
-            <h2 className="text-xl font-bold text-white mb-10">Proyek</h2>
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-10">
+              <h2 className="text-xl font-bold text-white">Proyek</h2>
+              <div className="flex flex-wrap gap-2">
+                {filterTabs.map((f) => (
+                  <button
+                    key={f.key}
+                    onClick={() => setActiveFilter(f.key)}
+                    className={`text-[11px] font-semibold px-3 py-1.5 rounded-full border transition-all ${
+                      activeFilter === f.key ? 'bg-indigo-500 text-white border-indigo-500' : 'border-slate-800 text-slate-400 hover:border-indigo-500/40'
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </Reveal>
           <div className="grid md:grid-cols-3 gap-6">
-            {projects.map((p, i) => (
-              <Reveal key={i} delay={i * 120}>
-                <div className="group h-full p-6 rounded-2xl border border-slate-800 bg-slate-950/50 flex flex-col hover:border-indigo-500/40 hover:-translate-y-1.5 hover:shadow-[0_10px_40px_rgba(99,102,241,0.12)] transition-all duration-300">
+            {visibleProjects.map((p, i) => (
+              <Reveal key={p.name} delay={i * 120}>
+                <TiltCard className="group h-full p-6 rounded-2xl border border-slate-800 bg-slate-950/50 flex flex-col hover:border-indigo-500/40 hover:shadow-[0_10px_40px_rgba(99,102,241,0.12)] transition-colors duration-300">
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-400">{p.tag}</span>
                     <div className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400 group-hover:bg-indigo-500/20 transition-colors">
@@ -184,7 +255,7 @@ export default function WebDevPage() {
                       Lihat kode <ExternalLink size={12} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </a>
                   )}
-                </div>
+                </TiltCard>
               </Reveal>
             ))}
           </div>
@@ -192,7 +263,7 @@ export default function WebDevPage() {
       </section>
 
       {/* SKILLS */}
-      <section className="px-6 py-16 border-t border-slate-900 bg-slate-950/30 relative">
+      <section id="stack" className="px-6 py-16 border-t border-slate-900 bg-slate-950/30 relative">
         <div className="max-w-5xl mx-auto">
           <Reveal>
             <h2 className="text-xl font-bold text-white mb-8">Tech Stack</h2>

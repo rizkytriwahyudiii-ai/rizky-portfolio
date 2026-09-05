@@ -41,9 +41,11 @@ export function useTypingEffect(words: string[], typeSpeed = 65, pauseMs = 1800,
       return () => clearTimeout(t);
     }
     if (subIndex === 0 && reverse) {
-      setReverse(false);
-      setIndex((prev) => (prev + 1) % words.length);
-      return;
+      const t = setTimeout(() => {
+        setReverse(false);
+        setIndex((prev) => (prev + 1) % words.length);
+      }, 0);
+      return () => clearTimeout(t);
     }
     const t = setTimeout(() => {
       setSubIndex((prev) => prev + (reverse ? -1 : 1));

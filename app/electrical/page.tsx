@@ -3,10 +3,14 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
-  ArrowLeft, Mail, GraduationCap, Zap, Cpu, Gauge,
-  Wrench, Activity, ClipboardCheck, ArrowRight
+  ArrowLeft, GraduationCap, Zap, Cpu, Gauge,
+  Wrench, Activity, ClipboardCheck, ArrowRight, Phone
 } from 'lucide-react';
 import { useReveal, useTypingEffect } from '../lib/useReveal';
+import {
+  CursorSpotlight, ScrollProgressBar, SectionDotNav, AnimatedCounter,
+  Marquee, TiltCard, CopyEmail, BackToTop, StaggeredText,
+} from '../lib/effects';
 
 const roles = [
   'Electrical Maintenance Technician',
@@ -14,10 +18,12 @@ const roles = [
   'Industrial Troubleshooter',
 ];
 
-const stats = [
-  { label: 'Tahun Pengalaman', value: '5+' },
-  { label: 'Perusahaan Manufaktur', value: '3' },
-  { label: 'Latar Pendidikan', value: 'SMK + S1' },
+const sections = [
+  { id: 'hero', label: 'Profil' },
+  { id: 'pengalaman', label: 'Pengalaman' },
+  { id: 'keahlian', label: 'Keahlian' },
+  { id: 'pendidikan', label: 'Pendidikan' },
+  { id: 'kontak', label: 'Kontak' },
 ];
 
 const experience = [
@@ -49,21 +55,25 @@ const experience = [
 
 const skillGroups = [
   {
+    key: 'plc',
     icon: <Cpu size={20} />,
     title: 'PLC & Kontrol',
     items: ['PLC Mitsubishi (Basic Ladder Logic)', 'PLC Omron', 'PLC Siemens', 'Smart Relay Schneider', 'HMI Weintek'],
   },
   {
+    key: 'inverter',
     icon: <Gauge size={20} />,
     title: 'Inverter & Kalibrasi',
     items: ['Inverter ABB', 'Inverter INVT', 'Inverter Delta', 'Inverter Schneider', 'Kalibrasi sensor PT100 & Thermocouple', 'Sensor Proximity & Laser Marking'],
   },
   {
+    key: 'kelistrikan',
     icon: <Zap size={20} />,
     title: 'Kelistrikan & Panel',
     items: ['Troubleshooting kelistrikan 3 phase', 'Wiring panel kontrol', 'Sistem pneumatic', 'Maintenance hoist crane'],
   },
   {
+    key: 'praktik',
     icon: <Activity size={20} />,
     title: 'Praktik Kerja',
     items: ['Predictive & preventive maintenance', 'Fault diagnostic & downtime tracking', 'Laporan perawatan mesin'],
@@ -87,7 +97,10 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 
 export default function ElectricalPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>('all');
   const typed = useTypingEffect(roles);
+
+  const visibleGroups = activeTab === 'all' ? skillGroups : skillGroups.filter((g) => g.key === activeTab);
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -114,6 +127,11 @@ export default function ElectricalPage() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-slate-200 font-sans antialiased selection:bg-amber-500 selection:text-black relative overflow-hidden">
+      <ScrollProgressBar colorClass="bg-amber-500" />
+      <CursorSpotlight color="245,158,11" />
+      <SectionDotNav sections={sections} activeColorClass="bg-amber-400 border-amber-400" />
+      <BackToTop accentClass="bg-amber-500 hover:bg-amber-400 text-black" />
+
       {/* Industrial grid background */}
       <div className="fixed inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-[0.15] pointer-events-none" />
       <div className="fixed top-[-10%] left-[10%] w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[120px] pointer-events-none animate-pulse" style={{ animationDuration: '6s' }} />
@@ -132,7 +150,7 @@ export default function ElectricalPage() {
       </nav>
 
       {/* HERO */}
-      <section className="relative px-6 pt-20 pb-24 max-w-5xl mx-auto">
+      <section id="hero" className="relative px-6 pt-20 pb-24 max-w-5xl mx-auto">
         <div className="grid md:grid-cols-[auto_1fr] gap-8 items-center">
           <div className="relative w-28 h-28 rounded-2xl overflow-hidden border-2 border-amber-500/30 shrink-0 shadow-[0_0_30px_rgba(245,158,11,0.15)]">
             <Image src="/profile.png" alt="Rizky Tri Wahyudi" fill sizes="112px" className="object-cover" />
@@ -142,7 +160,9 @@ export default function ElectricalPage() {
               <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
               Tersedia untuk peluang kerja
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">Rizky Tri Wahyudi</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
+              <StaggeredText text="Rizky Tri Wahyudi" />
+            </h1>
             <p className="text-amber-400 text-base font-semibold h-6" suppressHydrationWarning translate="no">
               {typed}
               <span className="animate-pulse">_</span>
@@ -153,27 +173,41 @@ export default function ElectricalPage() {
               Tenaga Listrik, dilengkapi latar belakang S1 Teknik Informatika.
             </p>
             <div className="flex flex-wrap gap-4 pt-2 text-xs text-slate-500">
-              <span className="flex items-center gap-1.5"><Mail size={13} /> rizkytriwahyudiii@gmail.com</span>
+              <CopyEmail email="rizkytriwahyudiii@gmail.com" accentClass="text-slate-500 hover:text-amber-400" />
               <span>Mojokerto → Sedati, Sidoarjo</span>
             </div>
           </div>
         </div>
 
-        {/* STATS */}
+        {/* STATS with animated counters */}
         <Reveal delay={100}>
           <div className="grid grid-cols-3 gap-4 mt-14 pt-10 border-t border-slate-900">
-            {stats.map((s, i) => (
-              <div key={i} className="text-center md:text-left">
-                <p className="text-2xl md:text-3xl font-black text-white">{s.value}</p>
-                <p className="text-[11px] text-slate-500 mt-1">{s.label}</p>
-              </div>
-            ))}
+            <div className="text-center md:text-left">
+              <p className="text-2xl md:text-3xl font-black text-white"><AnimatedCounter value={5} suffix="+" /></p>
+              <p className="text-[11px] text-slate-500 mt-1">Tahun Pengalaman</p>
+            </div>
+            <div className="text-center md:text-left">
+              <p className="text-2xl md:text-3xl font-black text-white"><AnimatedCounter value={3} /></p>
+              <p className="text-[11px] text-slate-500 mt-1">Perusahaan Manufaktur</p>
+            </div>
+            <div className="text-center md:text-left">
+              <p className="text-2xl md:text-3xl font-black text-white">SMK+S1</p>
+              <p className="text-[11px] text-slate-500 mt-1">Latar Pendidikan</p>
+            </div>
           </div>
         </Reveal>
+
+        {/* Skill marquee teaser */}
+        <div className="mt-10">
+          <Marquee
+            items={['PLC Mitsubishi', 'PLC Omron', 'PLC Siemens', 'Inverter ABB', 'HMI Weintek', 'Panel 3 Phase', 'Preventive Maintenance', 'Sensor Calibration']}
+            accentClass="border-amber-500/20 text-amber-300"
+          />
+        </div>
       </section>
 
       {/* EXPERIENCE */}
-      <section className="px-6 py-16 border-t border-slate-900 relative">
+      <section id="pengalaman" className="px-6 py-16 border-t border-slate-900 relative">
         <div className="max-w-5xl mx-auto">
           <Reveal>
             <div className="flex items-center gap-3 mb-10">
@@ -188,7 +222,7 @@ export default function ElectricalPage() {
                   <div className="absolute -left-[9px] top-0 h-4 w-4 rounded-full bg-slate-950 border-2 border-amber-500 flex items-center justify-center transition-all duration-300 group-hover:scale-125 group-hover:shadow-[0_0_12px_rgba(245,158,11,0.6)]">
                     <div className="h-1.5 w-1.5 rounded-full bg-amber-500" />
                   </div>
-                  <div className="ml-4 p-5 rounded-2xl border border-slate-900 bg-slate-950/40 group-hover:border-amber-500/30 group-hover:bg-slate-950/70 transition-all duration-300">
+                  <TiltCard className="ml-4 p-5 rounded-2xl border border-slate-900 bg-slate-950/40 group-hover:border-amber-500/30 group-hover:bg-slate-950/70 transition-colors duration-300">
                     <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 font-mono mb-2">
                       <span className="text-amber-400">{exp.icon}</span>
                       {exp.period} · {exp.location}
@@ -196,7 +230,7 @@ export default function ElectricalPage() {
                     <h3 className="text-base font-bold text-white">{exp.role}</h3>
                     <p className="text-amber-400 text-xs font-semibold mb-2">{exp.company}</p>
                     <p className="text-slate-500 text-sm leading-relaxed">{exp.desc}</p>
-                  </div>
+                  </TiltCard>
                 </div>
               </Reveal>
             ))}
@@ -204,16 +238,39 @@ export default function ElectricalPage() {
         </div>
       </section>
 
-      {/* SKILLS */}
-      <section className="px-6 py-16 border-t border-slate-900 bg-slate-950/30 relative">
+      {/* SKILLS with filter tabs */}
+      <section id="keahlian" className="px-6 py-16 border-t border-slate-900 bg-slate-950/30 relative">
         <div className="max-w-5xl mx-auto">
           <Reveal>
-            <h2 className="text-xl font-bold text-white mb-10">Keahlian Teknis</h2>
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-10">
+              <h2 className="text-xl font-bold text-white">Keahlian Teknis</h2>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => setActiveTab('all')}
+                  className={`text-[11px] font-semibold px-3 py-1.5 rounded-full border transition-all ${
+                    activeTab === 'all' ? 'bg-amber-500 text-black border-amber-500' : 'border-slate-800 text-slate-400 hover:border-amber-500/40'
+                  }`}
+                >
+                  Semua
+                </button>
+                {skillGroups.map((g) => (
+                  <button
+                    key={g.key}
+                    onClick={() => setActiveTab(g.key)}
+                    className={`text-[11px] font-semibold px-3 py-1.5 rounded-full border transition-all ${
+                      activeTab === g.key ? 'bg-amber-500 text-black border-amber-500' : 'border-slate-800 text-slate-400 hover:border-amber-500/40'
+                    }`}
+                  >
+                    {g.title}
+                  </button>
+                ))}
+              </div>
+            </div>
           </Reveal>
           <div className="grid sm:grid-cols-2 gap-6">
-            {skillGroups.map((group, i) => (
-              <Reveal key={i} delay={i * 100}>
-                <div className="group h-full p-6 rounded-2xl border border-slate-800 bg-slate-950/50 hover:border-amber-500/40 hover:-translate-y-1 transition-all duration-300">
+            {visibleGroups.map((group, i) => (
+              <Reveal key={group.key} delay={i * 100}>
+                <TiltCard className="group h-full p-6 rounded-2xl border border-slate-800 bg-slate-950/50 hover:border-amber-500/40 transition-colors duration-300">
                   <div className="flex items-center gap-2.5 mb-4 text-amber-400">
                     <div className="p-2 rounded-lg bg-amber-500/10 group-hover:bg-amber-500/20 transition-colors">
                       {group.icon}
@@ -228,7 +285,7 @@ export default function ElectricalPage() {
                       </li>
                     ))}
                   </ul>
-                </div>
+                </TiltCard>
               </Reveal>
             ))}
           </div>
@@ -236,7 +293,7 @@ export default function ElectricalPage() {
       </section>
 
       {/* EDUCATION */}
-      <section className="px-6 py-16 border-t border-slate-900 relative">
+      <section id="pendidikan" className="px-6 py-16 border-t border-slate-900 relative">
         <div className="max-w-5xl mx-auto">
           <Reveal>
             <h2 className="text-xl font-bold text-white mb-10">Pendidikan</h2>
@@ -281,6 +338,10 @@ export default function ElectricalPage() {
                 {!isSubmitting && <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />}
               </button>
             </form>
+            <div className="flex items-center gap-2 mt-6 text-xs text-slate-600">
+              <Phone size={12} />
+              Respons biasanya dalam 1x24 jam
+            </div>
           </div>
         </Reveal>
       </section>
